@@ -101,8 +101,6 @@ WHERE user_chains.chain_id IN ?
 		return
 	}
 	if user.Email.Valid && !user.IsEmailVerified {
-		db.Exec(`UPDATE user_chains SET created_at = NOW() WHERE user_id = ?`, user.ID)
-
 		for _, result := range results {
 			if result.Email.Valid {
 				go views.EmailAParticipantJoinedTheLoop(
@@ -184,6 +182,7 @@ func RegisterChainAdmin(c *gin.Context) {
 		PhoneNumber:     body.User.PhoneNumber,
 		Sizes:           body.User.Sizes,
 		Address:         body.User.Address,
+		Coordinates:     body.User.Coordinates,
 	}
 	if err := db.Create(user).Error; err != nil {
 		goscope.Log.Warningf("User already exists: %v", err)
@@ -252,6 +251,7 @@ func RegisterBasicUser(c *gin.Context) {
 		PhoneNumber:     body.User.PhoneNumber,
 		Sizes:           body.User.Sizes,
 		Address:         body.User.Address,
+		Coordinates:     body.User.Coordinates,
 	}
 	if res := db.Create(user); res.Error != nil {
 		goscope.Log.Warningf("User already exists: %v", res.Error)

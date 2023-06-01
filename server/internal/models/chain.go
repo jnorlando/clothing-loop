@@ -25,7 +25,6 @@ type Chain struct {
 	Radius           float32
 	Published        bool
 	OpenToNewMembers bool
-	RulesOverride    string
 	Sizes            []string `gorm:"serializer:json"`
 	Genders          []string `gorm:"serializer:json"`
 	UserChains       []UserChain

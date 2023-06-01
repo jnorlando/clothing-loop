@@ -91,7 +91,6 @@ func ChainGet(c *gin.Context) {
 
 	var query struct {
 		ChainUID string `form:"chain_uid" binding:"required"`
-		AddRules bool   `form:"add_rules" binding:"omitempty"`
 	}
 	if err := c.ShouldBindQuery(&query); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
@@ -105,7 +104,7 @@ func ChainGet(c *gin.Context) {
 		return
 	}
 
-	body := gin.H{
+	c.JSON(200, gin.H{
 		"uid":                 chain.UID,
 		"name":                chain.Name,
 		"description":         chain.Description,
@@ -117,12 +116,7 @@ func ChainGet(c *gin.Context) {
 		"genders":             chain.Genders,
 		"published":           chain.Published,
 		"open_to_new_members": chain.OpenToNewMembers,
-	}
-
-	if query.AddRules {
-		body["rules_override"] = chain.RulesOverride
-	}
-	c.JSON(200, body)
+	})
 }
 
 func ChainGetAll(c *gin.Context) {
@@ -218,7 +212,7 @@ func ChainUpdate(c *gin.Context) {
 		Radius           *float32  `json:"radius,omitempty" binding:"omitempty,gte=1.0,lte=70.0"`
 		Sizes            *[]string `json:"sizes,omitempty"`
 		Genders          *[]string `json:"genders,omitempty"`
-		RulesOverride    *string   `json:"rules_override,omitempty"`
+		Route            *[]string `json:"route,omitempty"`
 		Published        *bool     `json:"published,omitempty"`
 		OpenToNewMembers *bool     `json:"open_to_new_members,omitempty"`
 	}
@@ -271,9 +265,6 @@ func ChainUpdate(c *gin.Context) {
 	if body.Genders != nil {
 		j, _ := json.Marshal(body.Genders)
 		valuesToUpdate["genders"] = string(j)
-	}
-	if body.RulesOverride != nil {
-		valuesToUpdate["rules_override"] = *(body.RulesOverride)
 	}
 	if body.Published != nil {
 		valuesToUpdate["published"] = *(body.Published)

@@ -32,6 +32,7 @@ type User struct {
 	Chains          []UserChain `json:"chains"`
 	CreatedAt       time.Time   `json:"-"`
 	UpdatedAt       time.Time   `json:"-"`
+	Coordinates     []float64   `json:"-" gorm:"serializer:json"`
 }
 
 func (u *User) AddUserChainsToObject(db *gorm.DB) error {

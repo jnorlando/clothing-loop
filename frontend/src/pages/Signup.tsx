@@ -42,7 +42,8 @@ export default function Signup() {
     })();
   }, [chainUID]);
 
-  function onSubmitCurrentUser() {
+  function onSubmitCurrentUser(values: ValuesForm) {
+    console.info("submit", { ...values });
     if (authUser && chainUID) {
       chainAddUser(chainUID, authUser.uid, false)
         .then(() => {
@@ -75,6 +76,7 @@ export default function Signup() {
             newsletter: values.newsletter,
             address: values.address,
             sizes: values.sizes,
+            coordinates: values.coordinates
           },
           chainUID
         );
@@ -136,17 +138,12 @@ export default function Signup() {
               </h1>
 
               {authUser ? (
-                <form
-                  onSubmit={onSubmitCurrentUser}
-                  className="max-w-xs"
-                  id="address-form"
-                >
-                  <dl>
-                    <dt className="font-bold mb-1">{t("name")}</dt>
-                    <dd className="mb-2">{authUser.name}</dd>
-                    <dt className="font-bold mb-1">{t("email")}</dt>
-                    <dd className="mb-2">{authUser.email}</dd>
-                  </dl>
+                <div>
+                  <AddressForm
+                    onSubmit={onSubmitCurrentUser}
+                    userUID={authUser.uid}
+                    chainUID={chainUID}
+                  />
                   <div className="mb-4">
                     <button
                       type="button"
@@ -157,7 +154,7 @@ export default function Signup() {
                     </button>
                     <SubmitButton t={t} chain={chain} user={authUser} />
                   </div>
-                </form>
+                </div>
               ) : (
                 <div>
                   <AddressForm
@@ -207,6 +204,15 @@ function SubmitButton({
   chain: Chain | null;
   user?: User | null;
 }) {
+  if (chain?.open_to_new_members == false || chain?.published == false) {
+    return (
+      <p className="px-3 font-semibold text-sm border border-secondary h-12 inline-flex items-center text-secondary">
+        {t("closed")}
+        <span className="feather feather-lock ml-3 rtl:ml-0 rtl:mr-3"></span>
+      </p>
+    );
+  }
+
   if (user && chain) {
     let userChain = user.chains.find((uc) => uc.chain_uid === chain.uid);
     if (userChain) {
@@ -226,14 +232,6 @@ function SubmitButton({
         );
       }
     }
-  }
-  if (chain?.open_to_new_members == false || chain?.published == false) {
-    return (
-      <p className="px-3 font-semibold text-sm border border-secondary h-12 inline-flex items-center text-secondary">
-        {t("closed")}
-        <span className="feather feather-lock ml-3 rtl:ml-0 rtl:mr-3"></span>
-      </p>
-    );
   }
 
   return (

@@ -38,6 +38,7 @@ export default function Signup() {
       newsletter: values.newsletter,
       address: values.address,
       sizes: values.sizes,
+      coordinates: values.coordinates
     };
     console.log("submit", registerUser);
 

@@ -8,6 +8,7 @@ export interface RequestRegisterUser {
   phone_number: string;
   newsletter: boolean;
   sizes: Array<Sizes | string>;
+  coordinates: Float64Array[];
 }
 
 export interface RequestRegisterChain {
