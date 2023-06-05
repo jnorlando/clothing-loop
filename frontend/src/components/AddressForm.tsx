@@ -20,7 +20,8 @@ export interface ValuesForm {
   address: string;
   sizes: string[];
   newsletter: boolean;
-  coordinates: Float64Array[];
+  latitude: number;
+  longitude: number;
 }
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_KEY;
 
@@ -44,7 +45,8 @@ export default function AddressForm(props: {
     sizes: [] as string[],
     address: "",
     newsletter: false,
-    coordinates: [] as Float64Array[],
+    latitude: 0,
+    longitude: 0,
   });
   const [address, setAddress] = useForm({
     street: "",
@@ -78,7 +80,8 @@ export default function AddressForm(props: {
             sizes: user.sizes,
             address: user.address,
             newsletter: hasNewsletterReq.data,
-            coordinates: user.coordinates,
+            latitude: user.latitude,
+            longitude: user.longitude
           });
         } catch (error) {
           console.warn(error);
@@ -106,7 +109,7 @@ export default function AddressForm(props: {
     const data = await response.json();
     
     
-   return data.features[0]?.geometry.coordinates;
+   return data.features?.geometry.coordinates;
   }
 
   
@@ -115,6 +118,7 @@ export default function AddressForm(props: {
     e.preventDefault();
 
     (async () => {
+      let coordinates = [];
       if (openAddress) {
         if (!(address.street && address.city && address.country)) {
           addToastError(t("required") + ": " + t("address"), 400);
@@ -131,7 +135,9 @@ export default function AddressForm(props: {
           " " +
           address.country;
 
-        values.coordinates = await getCoordinates(addressConcatenated.replaceAll(" ", "%20"));
+        coordinates = await getCoordinates(addressConcatenated.replaceAll(" ", "%20"));
+        values.latitude = coordinates[0];
+        values.longitude = coordinates[1];
         if (useUserInput) {
           values.address = addressConcatenated;
         } else {

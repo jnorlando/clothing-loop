@@ -11,7 +11,8 @@ export interface User {
   sizes: string[];
   is_root_admin: boolean;
   pause_until: string | null;
-  coordinates: Float64Array[];
+  longitude: number;
+  latitude: number;
 }
 
 export interface Bag {

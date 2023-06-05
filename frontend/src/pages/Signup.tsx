@@ -76,7 +76,8 @@ export default function Signup() {
             newsletter: values.newsletter,
             address: values.address,
             sizes: values.sizes,
-            coordinates: values.coordinates
+            latitude: values.latitude,
+            longitude: values.latitude,
           },
           chainUID
         );
